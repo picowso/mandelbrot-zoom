@@ -1,1 +1,0 @@
-zooming at mandelbrot set!
