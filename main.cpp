@@ -8,8 +8,10 @@
 static SDL_Window *window = NULL;
 static SDL_Renderer *renderer = NULL;
 
+// 7/6 ratio
 #define WINDOW_WIDTH 350
 #define WINDOW_HEIGHT 300
+int iters_n = 35;
 
 /* This function runs once at startup. */
 static Uint64 strt = 0;
@@ -56,8 +58,14 @@ int good(long double x, long double y) {
 }
 
 int gsb[WINDOW_WIDTH][WINDOW_HEIGHT][3];
+int l = 0;
 SDL_AppResult SDL_AppIterate(void *appstate) {
     Uint64 curt = SDL_GetTicks() - strt;
+    if(curt/3000 != l) {
+        l = curt/3000;
+        iters_n++;
+    }
+
     cout << curt << endl;
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);  /* black, full alpha */
     SDL_RenderClear(renderer);  /* start with a blank canvas. */
