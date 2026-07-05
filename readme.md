@@ -17,3 +17,7 @@ I saw those LSD trippy videos of mandelbrot-set zooming on youtube and i thought
 ### Theme
 
 Endless, this program zooms until it's computationally impossible to keep zooming (around 10^-21 UA)
+
+### AUX
+
+For a better experience, compile this yourself (make sure you have libsdl3-dev installed), and run it in desktop, it is much faster than web apparently, and for a better experience change WINDOW_WIDTH and WINDOW_HEIGHT in header.hpp.
