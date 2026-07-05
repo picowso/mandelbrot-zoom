@@ -2,6 +2,18 @@
 
 [Try it here](https://mandelbrot-web-sand.vercel.app/)
 
-I suggest compiling it yourself and changing WINDOW_WIDTH and WINDOW_HEIGHT for a better experience, i'll try my best to make it more efficient for the web starting from now on! since browsers don't like lots of calculations!
+### What is the project?
 
-- Theme is Endless, it zooms until it can't!
+A basic unoptimized mandelbrot-set zoomer/visualizer, very vanilla and there was no attempt at making it efficient at all, hopefully this changes soon considering how laggy is in the web!
+
+### Why did you build it?
+
+It looks cool, mandelbrot-set is a very interesting 'thing'!
+
+### Inspiration
+
+I saw those LSD trippy videos of mandelbrot-set zooming on youtube and i thought they were cool, so i tried recreating them
+
+### Theme
+
+Endless, this program zooms until it's computationally impossible to keep zooming (around 10^-21 UA)
