@@ -88,7 +88,8 @@ void getRawImage(int arr[WINDOW_WIDTH][WINDOW_HEIGHT][3], Config cfg) {
     }
 }
 
-void gaussianBlur(int result[WINDOW_WIDTH][WINDOW_HEIGHT][3], int original[WINDOW_WIDTH][WINDOW_HEIGHT][3]) {
+
+[[deprecated("AA does the job better now")]] void gaussianBlur(int result[WINDOW_WIDTH][WINDOW_HEIGHT][3], int original[WINDOW_WIDTH][WINDOW_HEIGHT][3]) {
     const int stab = 6;
     for(int k = 0 ; k < WINDOW_WIDTH ; k++) {
         for(int j = 0 ; j < WINDOW_HEIGHT ; j++) {
@@ -157,11 +158,9 @@ int main()
         }
 
         window.clear(sf::Color::Black);
-        int beforeGaussian[WINDOW_WIDTH][WINDOW_HEIGHT][3] = {};
-        getRawImage(beforeGaussian, cfg);
-        int afterGaussian[WINDOW_WIDTH][WINDOW_HEIGHT][3] = {};
-        gaussianBlur(afterGaussian, beforeGaussian);
-        renderImage(beforeGaussian, window);
+        int Image[WINDOW_WIDTH][WINDOW_HEIGHT][3] = {};
+        getRawImage(Image, cfg);
+        renderImage(Image, window);
         frame++;
         if (!pause) zoomIn(cfg);
         window.display();
