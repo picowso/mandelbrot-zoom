@@ -1,7 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 #include "SimpleIni.h"
-
 struct Config {
   long double zoom_ptx = 0;
   long double zoom_pty = 1;
@@ -11,6 +10,7 @@ struct Config {
   long double start_yy = 1.5; // i lwk dont know wtf these are, me too (vicis)
   float coefficient = 0.9;
   int iters_n = 50;
+  int isFancy = 0;
 };
 
 Config getConfig(){
@@ -32,6 +32,7 @@ Config getConfig(){
   cfg.start_yy    = stold(ini.GetValue("mandelbrot", "start_yy", "-1"));
   cfg.coefficient = stold(ini.GetValue("mandelbrot", "coefficient", "-1"));
   cfg.iters_n     = stold(ini.GetValue("mandelbrot", "iters_n", "-1"));
+  cfg.isFancy     = stold(ini.GetValue("mandelbrot", "isFancy", "-1"));
   bool bad = cfg.zoom_ptx == -1
     or cfg.zoom_pty == -1
     or cfg.start_xx == -1
@@ -39,7 +40,8 @@ Config getConfig(){
     or cfg.start_yx == -1
     or cfg.start_yy == -1
     or cfg.coefficient == -1
-    or cfg.iters_n == -1;
+    or cfg.iters_n == -1
+    or cfg.isFancy == -1;
   if (bad){
     std::cout << "cfg is bad"; 
     return base_cfg;
@@ -53,7 +55,7 @@ constexpr int WINDOW_WIDTH = 640;
 constexpr int WINDOW_HEIGHT = 480;
 long double xx, xy, yx, yy; // = -2.5, xy = 1.0, yx = -1.5, yy = 1.5; // i lwk dont know wtf these are, me too (vicis)
 
-sf::Color getColor(long double x, long double y, Config cfg) {
+sf::Color getColor(long double x, long double y, Config const &cfg) {
     long double zx = 0., zy = 0.;
     long double zx2 =0, zy2=0;
     int j = 0;
@@ -69,20 +71,39 @@ sf::Color getColor(long double x, long double y, Config cfg) {
     sf::Color color(255.0 * r, 255.0 * g, 255.0 * b);
     return color;
 }
-
-void zoomIn(Config cfg) {
+sf::Color getColorFancy(long double x, long double y, Config const &cfg) {
+    long double zx = 0., zy = 0.;
+    long double zx2 =0, zy2=0;
+     float j = 0;
+    for(; j < cfg.iters_n ; j++) {
+        zx2=zx*zx;
+        zy2=zy*zy;
+        zy=2*zx*zy+y;
+        zx=zx2-zy2+x;
+        if(zx2 + zy2 > 1e5) break;
+    }
+    if (j<cfg.iters_n) {
+        float log_zn = log2f(zx2+zy2)/2;
+        j+=1-log2f(log_zn);
+    }
+    float scale = 1.0 - j/static_cast<float>(cfg.iters_n);
+    float r = scale * scale * scale, g = scale * scale, b = scale;
+    sf::Color color(255.0 * r, 255.0 * g, 255.0 * b);
+    return color;
+}
+void zoomIn(Config const &cfg) {
     xx = cfg.zoom_ptx + (xx - cfg.zoom_ptx) * cfg.coefficient;
     xy = cfg.zoom_ptx + (xy - cfg.zoom_ptx) * cfg.coefficient;
     yx = cfg.zoom_pty + (yx - cfg.zoom_pty) * cfg.coefficient;
     yy = cfg.zoom_pty + (yy - cfg.zoom_pty) * cfg.coefficient;
 }
 
-void getRawImage(int arr[WINDOW_WIDTH][WINDOW_HEIGHT][3], Config cfg) {
+void getRawImage(int arr[WINDOW_WIDTH][WINDOW_HEIGHT][3], Config const &cfg) {
     for(int k = 0 ; k < WINDOW_WIDTH ; k++) {
         for(int j = 0 ; j < WINDOW_HEIGHT ; j++) {
             long double x = xx + ((k+1)*(xy-xx))/WINDOW_WIDTH;
             long double y = yx + ((j+1)*(yy-yx))/WINDOW_HEIGHT;
-            sf::Color v = getColor(x, y, cfg);
+            sf::Color v = (cfg.isFancy ? getColorFancy(x, y, cfg) : getColor(x,y,cfg));
             arr[k][j][0] = v.r;
             arr[k][j][1] = v.g;
             arr[k][j][2] = v.b;
