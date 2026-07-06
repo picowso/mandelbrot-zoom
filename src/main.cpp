@@ -56,20 +56,61 @@ constexpr int WINDOW_HEIGHT = 480;
 long double xx, xy, yx, yy; // = -2.5, xy = 1.0, yx = -1.5, yy = 1.5; // i lwk dont know wtf these are, me too (vicis)
 
 
-sf::Color colorMapDumb(float x) {
+sf::Color colorMapDumb(int j, Config const& cfg) {
+    float x = static_cast<float>(j)/cfg.iters_n;
     float scale = 1.0 - x;
     float r = scale * scale * scale, g = scale * scale, b = scale;
     sf::Color color(255.0 * r, 255.0 * g, 255.0 * b);
     return color;
 }
 
-sf::Color colorMap(float x) {
+sf::Color colorMap(int j, Config const& cfg) {
+    float x = static_cast<float>(j)/cfg.iters_n;
     float scale = 1.0 - x;
     scale=pow(scale,2.2);
     float r = scale, g = scale, b = scale;
     sf::Color color(255.0 * r, 255.0 * g, 255.0 * b);
     return color;
 }
+
+sf::Color lerp(const sf::Color& a, const sf::Color& b, float p)
+{
+    return sf::Color(
+        (1.0f - p) * a.r + p * b.r,
+        (1.0f - p) * a.g + p * b.g,
+        (1.0f - p) * a.b + p * b.b
+    );
+}
+
+sf::Color colorMapSmart(int j, Config const& cfg){
+  float t = 15.0 * static_cast<float>(j)/cfg.iters_n;
+  if (j < cfg.iters_n && j > 0)
+  {
+      sf::Color mapping[16];
+      mapping[0] = sf::Color(66, 30, 15);
+      mapping[1] = sf::Color(25, 7, 26);
+      mapping[2] = sf::Color(9, 1, 47);
+      mapping[3] = sf::Color(4, 4, 73);
+      mapping[4] = sf::Color(0, 7, 100);
+      mapping[5] = sf::Color(12, 44, 138);
+      mapping[6] = sf::Color(24, 82, 177);
+      mapping[7] = sf::Color(57, 125, 209);
+      mapping[8] = sf::Color(134, 181, 229);
+      mapping[9] = sf::Color(211, 236, 248);
+      mapping[10] = sf::Color(241, 233, 191);
+      mapping[11] = sf::Color(248, 201, 95);
+      mapping[12] = sf::Color(255, 170, 0);
+      mapping[13] = sf::Color(204, 128, 0);
+      mapping[14] = sf::Color(153, 87, 0);
+      mapping[15] = sf::Color(106, 52, 3);
+      int k = floor(t);
+      if (k == 15) return mapping[15];
+      float p = t - k;
+      return lerp(mapping[k], mapping[k+1], p);
+  }
+  else return sf::Color::Black;
+}
+
 sf::Color getColor(long double x, long double y, Config const &cfg) {
     long double zx = 0., zy = 0.;
     long double zx2 = 0, zy2 = 0;
@@ -81,7 +122,7 @@ sf::Color getColor(long double x, long double y, Config const &cfg) {
         zx = zx2 - zy2 + x;
         if (zx2 + zy2 > 4) break;
     }
-    return colorMap(static_cast<float>(j)/cfg.iters_n);
+    return colorMap(j, cfg);
 }
 
 sf::Color getColorFancy(long double x, long double y, Config const &cfg) {
@@ -99,7 +140,7 @@ sf::Color getColorFancy(long double x, long double y, Config const &cfg) {
         float log_zn = log2f(zx2 + zy2) / 2;
         j += 1 - log2f(log_zn);
     }
-    return colorMap(j/cfg.iters_n);
+    return colorMapSmart(j, cfg);
 }
 
 void zoomIn(Config const &cfg) {
