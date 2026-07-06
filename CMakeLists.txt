@@ -12,7 +12,7 @@ FetchContent_Declare(SFML
         SYSTEM)
 FetchContent_MakeAvailable(SFML)
 
-add_executable(main src/main.cpp src/header.hpp)
+add_executable(main src/main.cpp src/SimpleIni.h)
 
 if(WIN32)
     target_link_options(main PRIVATE -Wl,--stack=268435456)
