@@ -21,3 +21,11 @@ Endless, this program zooms until it's computationally impossible to keep zoomin
 ### AUX
 
 For a better experience, compile this yourself (make sure you have libsdl3-dev installed), and run it in desktop, it is much faster than web apparently, and for a better experience change WINDOW_WIDTH and WINDOW_HEIGHT in header.hpp.
+
+### Stack:
+
+You can compile this for both Web using EMScripten or Desktop by running `make` after a git clone, to compile for web:
+
+- [install EMScripten](https://emscripten.org/docs/getting_started/downloads.html)
+- run `fish deploy_web.fish` make sure you have fish shell
+- enjoy
